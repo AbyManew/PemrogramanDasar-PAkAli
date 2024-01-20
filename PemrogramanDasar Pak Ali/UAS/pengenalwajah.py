@@ -1,42 +1,53 @@
-import requests
+# Import library yang diperlukan
+import cv2
+import face_recognition
 
-def get_weather(api_key, city):
-    # URL dasar API OpenWeatherMap
-    base_url = "http://api.openweathermap.org/data/2.5/weather"
+# Fungsi untuk menggambar kotak di sekitar wajah yang terdeteksi
+def draw_rectangle(frame, top, right, bottom, left):
+    cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
 
-    # Parameter untuk dikirimkan ke API, termasuk kunci API, nama kota, dan unit suhu (Celsius)
-    params = {
-        'q': city,
-        'appid': api_key,
-        'units': 'metric'  # Untuk mendapatkan suhu dalam satuan Celsius
-    }
+# Fungsi untuk menampilkan teks label di sekitar wajah yang terdeteksi
+def draw_text(frame, text, x, y):
+    cv2.putText(frame, text, (x, y), cv2.FONT_HERSHEY_DUPLEX, 0.5, (255, 255, 255), 1)
 
-    # Mengirim permintaan GET ke API
-    response = requests.get(base_url, params=params)
-    weather_data = response.json()
+# Load gambar wajah yang akan dijadikan referensi (harus berupa gambar .jpg)
+reference_image = face_recognition.load_image_file("path/to/reference/image.jpg")
 
-    # Memeriksa status kode respons
-    if response.status_code == 200:
-        # Mendapatkan informasi utama tentang cuaca dari respons JSON
-        main_info = weather_data['main']
-        weather_description = weather_data['weather'][0]['description']
-        temperature = main_info['temp']
-        humidity = main_info['humidity']
+# Dapatkan encoding wajah dari gambar referensi
+reference_encoding = face_recognition.face_encodings(reference_image)[0]
 
-        # Menampilkan hasil cuaca
-        print(f"Weather in {city}:")
-        print(f"Description: {weather_description}")
-        print(f"Temperature: {temperature}°C")
-        print(f"Humidity: {humidity}%")
-    else:
-        # Menampilkan pesan kesalahan jika gagal mendapatkan data cuaca
-        print(f"Failed to fetch weather data. Status code: {response.status_code}")
-        print(weather_data)
+# Inisialisasi kamera
+video_capture = cv2.VideoCapture(0)
 
-if __name__ == "__main__":
-    # Ganti 'YOUR_API_KEY' dengan kunci API OpenWeatherMap Anda
-    api_key = 'YOUR_API_KEY'
-    city = input("Enter city name: ")
-    
-    # Memanggil fungsi untuk mendapatkan data cuaca
-    get_weather(api_key, city)
+while True:
+    # Ambil frame dari kamera
+    ret, frame = video_capture.read()
+
+    # Temukan semua wajah dalam frame
+    face_locations = face_recognition.face_locations(frame)
+    face_encodings = face_recognition.face_encodings(frame, face_locations)
+
+    for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
+        # Bandingkan encoding wajah dalam frame dengan encoding wajah referensi
+        matches = face_recognition.compare_faces([reference_encoding], face_encoding)
+
+        name = "Unknown"
+
+        # Jika ada wajah yang cocok dengan referensi, beri label nama
+        if True in matches:
+            name = "Name_of_the_person"  # Ganti dengan nama orang yang sesuai
+
+        # Gambar kotak di sekitar wajah dan tampilkan teks nama
+        draw_rectangle(frame, top, right, bottom, left)
+        draw_text(frame, name, left + 6, bottom - 6)
+
+    # Tampilkan frame yang telah dimodifikasi
+    cv2.imshow('Video', frame)
+
+    # Hentikan program dengan menekan tombol 'q'
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Tutup kamera dan jendela tampilan
+video_capture.release()
+cv2.destroyAllWindows()

@@ -19,7 +19,7 @@ def prediksi_cuaca(kota):
         tekanan_udara = data['main']['pressure']
 
         # Mencetak prediksi cuaca
-        print(f"Prediksi cuaca di {kota}:")
+        print(f"Cuaca saat ini di {kota}:")
         print(f"Cuaca: {cuaca}")
         print(f"Suhu: {suhu} Kelvin")
         print(f"Kelembaban: {kelembaban}%")

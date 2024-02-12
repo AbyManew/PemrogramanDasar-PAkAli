@@ -2,11 +2,11 @@
 
 # Inisialisasi dictionary untuk menyimpan daftar barang dan harganya
 daftar_barang = {
-    "Apel": 5000,
-    "Pisang": 3000,
-    "Jeruk": 7000,
-    "Anggur": 10000,
-    "Semangka": 15000
+    "apel": 5000,
+    "pisang": 3000,
+    "jeruk": 7000,
+    "anggur": 10000,
+    "semangka": 15000
 }
 
 # Inisialisasi dictionary untuk menyimpan stok barang

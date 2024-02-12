@@ -11,11 +11,11 @@ daftar_barang = {
 
 # Inisialisasi dictionary untuk menyimpan stok barang
 stok_barang = {
-    "Apel": 10,
-    "Pisang": 20,
-    "Jeruk": 15,
-    "Anggur": 8,
-    "Semangka": 5
+    "apel": 10,
+    "pisang": 20,
+    "jeruk": 15,
+    "anggur": 8,
+    "semangka": 5
 }
 
 # Inisialisasi variabel untuk menyimpan total pembelian
